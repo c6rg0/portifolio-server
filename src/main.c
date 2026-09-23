@@ -12,10 +12,13 @@
 #include <linux/input.h>
 #include <netdb.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <unistd.h> // open(), write(), close()
+#include <string.h> 
+#include "parser.h"
 
 int main(void)
 {
@@ -57,25 +60,54 @@ int main(void)
         break;
     }
 
+    int buffer_size = sizeof(char) * 4096;
+    char *buffer = malloc(buffer_size + 1);
+    if (buffer == NULL) {
+        printf("malloc error");
+        return 1;
+    }
+
+    ssize_t request = read(clientfd, buffer, buffer_size);
+
+    printf("request: %zd\n", request);
+    if (request <= 0){
+        printf("Request contains no data or read error\n");
+        free(malloc);
+        return 1;
+    }
+    printf("buffer: %.*s\n", (int)request, buffer);
+
 	FILE *fptr;
 	fptr = fopen("/tmp/request09842089303", "w");
     if (!fptr) {
         printf("fopen error\n");
         return 1;
     }
+    fwrite(buffer, sizeof(char), request, fptr);
+    fclose(fptr);
 
-    char buffer[4096]; // 4096 has no meaning atp
-    ssize_t request = read(clientfd, buffer, 4096);
+    struct HTTP_REQUEST r;
+    r = get_req_type(buffer);
 
-    printf("request: %zd\n", request);
-    if (request < 0){
-        printf("Request contains no data?");
+    char *response_message = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html\">\n<body>\n<h1>My First Heading</h1>\n<p>My first paragraph.</p>\n</body>\n<head>\n</html>";
+
+    ssize_t response;
+
+    if (strcmp(r.req_type, "GET") == 0){
+        response = write(clientfd, response_message, strlen(response_message));
+        if (response < 0){
+            printf("Data wasn't written to target\n");
+            return 1;
+        }
+        printf("Data sent to target\n");
+    } 
+    else {
+        printf("req_type did not match GET\n");
+        printf("req_type: %.*s\n", (int)strlen(r.req_type), r.req_type);
+        return 1;
     }
 
-    printf("buffer: %.*s\n", (int)request, buffer);
-    fwrite(buffer, 1, request, fptr);
-
-    fclose(fptr);
 	close(sockfd);
+    free(buffer);
 	return 0;
 }
