@@ -2,10 +2,11 @@
 #define PARSER_H
 
 struct HTTP_REQUEST {
-	char *req_type;
-	int HTTP_version;
+	char *method;
+	char *target;
+	int protocol;
 };
 
-struct HTTP_REQUEST get_req_type(char *buffer);
+struct HTTP_REQUEST get_method(char *buffer);
 
 #endif
