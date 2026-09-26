@@ -8,14 +8,11 @@ struct HTTP_REQUEST get_method(char *buffer)
 	struct HTTP_REQUEST r;
 
 	r.method = strtok_r(buffer, " ", &buffer);
-	if (r.method == NULL) {
-		printf("Method is NULL");
-		exit(1);
-	}
-
 	r.target = strtok_r(buffer, " H", &buffer);
-	if (r.target == NULL) {
-		printf("Target is NULL");
+	r.protocol = strtok_r(buffer, " \n", &buffer);
+
+	if (r.method == NULL || r.protocol == NULL || r.target == NULL) {
+		printf("Header is broken");
 		exit(1);
 	}
 

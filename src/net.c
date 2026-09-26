@@ -1,6 +1,5 @@
 #include "parser.h"
-#include <errno.h>
-#include <fcntl.h> // File control options
+#include <fcntl.h>
 #include <netdb.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -97,8 +96,6 @@ int net_action(int clientfd, char *buffer, int buffer_size)
 		printf("(method: %.*s)\n", (int)strlen(r.method), r.method);
 		return 1;
 	}
-
-	printf("(target: %.*s)\n", (int)strlen(r.target), r.target);
 
 	close(clientfd);
 	return 0;
