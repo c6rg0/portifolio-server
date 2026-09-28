@@ -5,7 +5,7 @@
 
 ## Build:
 - Use `nix build --print-build-logs` if you want to use nix.
-- Otherwise, install the depencies and follow the commands in flake.nix.
+- Otherwise, install the dependencies and follow the commands in flake.nix.
 
 ## Todo:
 - [x] Read a GET request from HTTP client
