@@ -3,13 +3,14 @@
 
 class Network {
 public:
-    Network (void);
-    void Listen (void);
-    void Response (void);
-    ~Network ();
+	Network(void);
+	void Listen(void);
+	void Response(void);
+	~Network();
+
 private:
-    int sockfd;
-    int clientfd;
+	int sockfd;
+	int clientfd;
 };
 
 #endif
