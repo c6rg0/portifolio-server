@@ -3,7 +3,7 @@
 #include <cstring>
 #include <iostream>
 
-void Lexer::get_rqst_tokens (char* buffer)
+void Lexer::get_req_tokens (char* buffer)
 {
     //TODO: refactor this whole function
 
@@ -13,7 +13,6 @@ void Lexer::get_rqst_tokens (char* buffer)
         exit(1);
     }
     method = token;
-    std::cout << "method: " << method << '\n';
 
     token = std::strtok(nullptr, " \n\r\t");
     if (!token){
@@ -21,7 +20,6 @@ void Lexer::get_rqst_tokens (char* buffer)
         exit(1);
     }
     target = token;
-    std::cout << "target: " << target << '\n';
 
     token = std::strtok(nullptr, " \n\r\t");
     if (!token){
@@ -29,5 +27,4 @@ void Lexer::get_rqst_tokens (char* buffer)
         exit(1);
     }
     protocol = token;
-    std::cout << "protocol: " << protocol << '\n';
 }

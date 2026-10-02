@@ -1,5 +1,5 @@
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef LEX_H
+#define LEX_H
 
 #include <string>
 
@@ -9,7 +9,7 @@ public:
 	std::string target;
 	std::string protocol;
 
-	void get_rqst_tokens(char* buffer);
+	void get_req_tokens(char* buffer);
 };
 
 #endif

@@ -1,9 +1,11 @@
 //TODO: check if all these headers are required
 #include "net.h"
 #include "lex.h"
+#include "assets.h"
 #include <iostream>
 #include <string>
 #include <array>
+#include <fstream>
 #include <fcntl.h>
 #include <netdb.h>
 #include <stdio.h>
@@ -51,7 +53,7 @@ void Network::Listen ()
             std::cout << "(Accept error)\n";
             exit(1);
         }
-        std::cout << "(Accept success)\n";
+        std::cout << "\n(Accept success)\n";
         break;
     }
 }
@@ -62,39 +64,23 @@ void Network::Response (void)
     char buffer[8192];
 
     ssize_t request = read(clientfd, buffer, 8192);
-    std::cout << "(ssize_t request: " << request << ")\n";
 
     if (request <= 0) {
         std::cout << "(Request contains no data or read error)\n";
         exit(1);
     }
-    //TODO
-    //
-    std::cout << buffer << "\n";
-
-    //TODO: Refactor and move the below code
-    /*
-    FILE *fptr;
-    fptr = fopen"/tmp/request09842089303", "w";
-    if (!fptr) {
-        std::cout << "(fopen error)\n";
-        exit(1);
-    }
-    fwrite(buffer, sizeof(char), request, fptr);
-    fclose(fptr);
-    */
 
     Lexer lexer;
-    lexer.get_rqst_tokens(buffer); // todo
+    lexer.get_req_tokens(buffer); // todo
 
-    std::string response_message =
-        "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html\">\n<body>\n<h1>My First Heading</h1>\n<p>My first paragraph.</p>\n</body>\n<head>\n</html>";
+    Assets assets;
+    std::string payload = assets.res_route(lexer.target);
 
     ssize_t response;
-    std::string get_str("GET");
+    // std::string get_str("GET");
 
-    if ((lexer.method.compare(get_str)) == 0) {
-        response = write(clientfd, response_message.data(), response_message.size());
+    if ((lexer.method.compare("GET")) == 0) {
+        response = write(clientfd, payload.data(), payload.size());
         if (response < 0) {
             std::cout << "(Data wasn't written to target)\n";
             exit(1);
@@ -102,7 +88,6 @@ void Network::Response (void)
         std::cout << "(Data sent to target)\n";
     } else {
         std::cout << "(method did not match GET)\n";
-        std::cout << lexer.method;
         exit(1);
     }
 
